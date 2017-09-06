@@ -1,0 +1,111 @@
+#&EXT_RESTART
+# RESTART_CELL TRUE
+# RESTART_FILE_NAME geo-1.restart
+# RESTART_POS TRUE
+# RESTART_VEL TRUE
+# RESTART_DEFAULT TRUE
+#&END EXT_RESTART
+
+######################################################################
+&GLOBAL
+  PROJECT geo
+  RUN_TYPE GEO_OPT 
+  PRINT_LEVEL MEDIUM
+&END GLOBAL
+######################################################################
+
+
+######################################################################
+&FORCE_EVAL
+  &DFT     
+    BASIS_SET_FILE_NAME ./BASIS_MOLOPT
+    POTENTIAL_FILE_NAME ./GTH_POTENTIALS 
+    LSD  F
+    CHARGE  0
+    &MGRID
+      CUTOFF 280
+    &END MGRID
+    &QS     
+      EPS_DEFAULT 1.0E-12      
+    &END QS
+    &SCF    
+      SCF_GUESS RESTART        
+      EPS_SCF 1.0E-6
+      MAX_SCF 50
+      &OUTER_SCF
+         EPS_SCF 1.0E-6
+         MAX_SCF 5 
+      &END  
+      &OT          
+         MINIMIZER DIIS
+      &END 
+    &END SCF
+    &XC    
+      &XC_FUNCTIONAL PBE   
+      &END XC_FUNCTIONAL  
+    &END XC 
+  &END DFT  
+  &SUBSYS
+    &CELL
+      ABC  10 10 10
+      ALPHA_BETA_GAMMA 90 90 90
+    &END CELL
+	&COORD
+ H         0.148000        0.889000        1.000000
+ C         0.765000       -0.145000        1.000000
+ C         2.346000       -0.121000        1.000000
+ H        -0.026000       -0.178000        1.000000
+ H         2.179000       -0.043000        1.751000
+ H         2.918000       -0.217000        0.016000
+	&END COORD
+    &TOPOLOGY
+	  CONNECTIVITY OFF  
+    &END TOPOLOGY 
+    &KIND H
+     BASIS_SET DZVP-MOLOPT-SR-GTH-q1
+     POTENTIAL GTH-PBE-q1
+    &END KIND
+    &KIND O
+     BASIS_SET DZVP-MOLOPT-SR-GTH-q6
+     POTENTIAL GTH-PBE-q6
+    &END KIND
+    &KIND C
+     BASIS_SET DZVP-MOLOPT-SR-GTH-q4
+     POTENTIAL GTH-PBE-q4
+    &END KIND
+  &END SUBSYS
+&END FORCE_EVAL
+######################################################################
+
+
+
+######################################################################
+&MOTION
+  &GEO_OPT
+    TYPE MINIMIZATION
+    MAX_DR    1.0E-03
+    MAX_FORCE 1.0E-03
+    RMS_DR    1.0E-03
+    RMS_FORCE 1.0E-03
+    MAX_ITER 200
+    OPTIMIZER CG
+    &CG
+      MAX_STEEP_STEPS  0
+      RESTART_LIMIT 9.0E-01
+    &END CG
+  &END GEO_OPT
+  &PRINT
+   &TRAJECTORY
+     &EACH
+      MD 1
+     &END EACH
+   &END TRAJECTORY
+   &RESTART
+     BACKUP_COPIES 2
+     &EACH
+       MD 1
+     &END EACH
+   &END RESTART
+  &END PRINT 
+&END MOTION 
+######################################################################
